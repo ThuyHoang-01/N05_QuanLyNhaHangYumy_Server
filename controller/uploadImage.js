@@ -29,7 +29,7 @@ const uploadImage= expressAsyncHandler(async (req, res)=> {
         const fileName= v4()
         try{
             fs.writeFileSync("./assets/i/" + fileName + "."+ extension , imageBuffer, 'utf8');
-            return res.status(200).json({img: "http://localhost:4000/i/" + fileName + "."+ extension})
+            return res.status(200).json({img:"https://yummypro.onrender.com/i/" + fileName + "."+ extension})
         }
         catch(err){
             console.error(err)
