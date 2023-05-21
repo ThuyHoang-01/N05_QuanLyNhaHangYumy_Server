@@ -22,7 +22,15 @@ const user2= {
     delete: expressAsyncHandler(async (req, res)=> {
         try {
             const [rows]= await connection.execute("DELETE FROM user WHERE id_user= ? AND role= 1", [req.body.user_id])
-            return res.status(200).json(rows)
+            return res.status(200).json({delete: true})
+        } catch (error) {
+            return res.status(500).json(error)
+        }
+    }),
+    deleteStaff: expressAsyncHandler(async (req, res)=> {
+        try {
+            const [rows]= await connection.execute("DELETE FROM user WHERE id_user= ? AND role= 2", [req.body.user_id])
+            return res.status(200).json({delete: true})
         } catch (error) {
             return res.status(500).json(error)
         }

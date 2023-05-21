@@ -21,7 +21,7 @@ const menu = {
     }),
     getMenu: expressAsyncHandler(async (req, res)=> {
         try {
-            const [rows]= await connection.execute(`SELECT menu.*, menu.menu_id AS id, CONCAT('[', GROUP_CONCAT(CONCAT('{dish_name":"', dish.dish_name, '","price":', dish.dish_price, '}')), ']') AS listDish FROM menu LEFT JOIN menu_dish ON menu.menu_id = menu_dish.menu_id LEFT JOIN dish ON dish.dish_id = menu_dish.dish_id GROUP BY menu.menu_id`)
+            const [rows]= await connection.execute(`SELECT menu.*, menu.menu_id AS id, CONCAT('[', GROUP_CONCAT(CONCAT('{"dish_name":"', dish.dish_name,  '","dish_id":"', dish.dish_id, '","price":', dish.dish_price, '}')), ']') AS listDish FROM menu LEFT JOIN menu_dish ON menu.menu_id = menu_dish.menu_id LEFT JOIN dish ON dish.dish_id = menu_dish.dish_id GROUP BY menu.menu_id`)
             return res.status(200).json(rows)
         } catch (error) {
             return res.status(200).json(error)
@@ -30,6 +30,8 @@ const menu = {
     update: expressAsyncHandler(async (req, res)=> {
         try {
             const [rows]= await connection.execute("UPDATE menu SET menu_name= ?, menu_description= ?, menu_photo= ? WHERE menu_id= ?", [req.body.menu_name, req.body.menu_description, req.body?.image, req.body.id])
+            await connection.execute("DELETE FROM menu_dish WHERE menu_id= ?", [req.body.id])
+            req.body?.dishList?.map(async item=> await connection.execute("INSERT INTO menu_dish(menu_id, dish_id) VALUES(?, ?)", [req.body.id, item.dish_id]))
             return res.status(200).json({update: true})
         } catch (error) {
             return res.status(500).json(error)
