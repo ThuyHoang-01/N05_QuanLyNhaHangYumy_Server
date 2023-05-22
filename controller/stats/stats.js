@@ -5,8 +5,11 @@ const moment= require("moment")
 const stats= {
     statsDate: expressAsyncHandler(async (req, res)=> {
         try {
-            const [rows]= await connection.execute("SELECT stats.*, order_request.user_name, order_request.time_created, order_request.time_paid AS time_booking FROM stats INNER JOIN order_request ON order_request.order_request_id = stats.order_id")
-            const stats= rows?.filter(item=> moment(item?.time_created).format("DD/MM/YYYY") === req.query?.time)
+            const [rows]= await connection.execute("SELECT stats.*, stats.time_created AS time_created_1, order_request.user_name, order_request.time_created, order_request.time_paid AS time_booking FROM stats INNER JOIN order_request ON order_request.order_request_id = stats.order_id")
+            console.log(rows)
+            // console.log(req.query.time)
+            const stats= rows?.filter(item=> moment(item?.time_created_1).format("DD/MM/YYYY") == req.query?.time)
+            // console.log(stats)
             return res.status(200).json(stats)        
             
         } catch (error) {
@@ -16,8 +19,8 @@ const stats= {
     }),
     statsMonth: expressAsyncHandler(async (req, res)=> {
         try {
-            const [rows]= await connection.execute("SELECT stats.*, order_request.user_name, order_request.time_created AS time_booking FROM stats INNER JOIN order_request ON order_request.order_request_id = stats.order_id")
-            const stats= rows?.filter(item=> moment(item?.time_created).format("MM/YYYY") === req.query?.time)
+            const [rows]= await connection.execute("SELECT stats.*,stats.time_created AS time_created_1, order_request.user_name, order_request.time_created AS time_booking FROM stats INNER JOIN order_request ON order_request.order_request_id = stats.order_id")
+            const stats= rows?.filter(item=> moment(item?.time_created_1).format("MM/YYYY") === req.query?.time)
             return res.status(200).json(stats)        
             
         } catch (error) {
@@ -26,8 +29,8 @@ const stats= {
     }),
     statsYear: expressAsyncHandler(async (req, res)=> {
         try {
-            const [rows]= await connection.execute("SELECT stats.*, order_request.user_name, order_request.time_created AS time_booking FROM stats INNER JOIN order_request ON order_request.order_request_id = stats.order_id")
-            const stats= rows?.filter(item=> moment(item?.time_created).format("YYYY") === req.query?.time)
+            const [rows]= await connection.execute("SELECT stats.*,stats.time_created AS time_created_1, order_request.user_name, order_request.time_created AS time_booking FROM stats INNER JOIN order_request ON order_request.order_request_id = stats.order_id")
+            const stats= rows?.filter(item=> moment(item?.time_created_1).format("YYYY") === req.query?.time)
             return res.status(200).json(stats)        
             
         } catch (error) {
@@ -36,8 +39,8 @@ const stats= {
     }),
     statsRange: expressAsyncHandler(async (req, res)=> {
         try {
-            const [rows]= await connection.execute("SELECT stats.*, order_request.user_name, order_request.time_created AS time_booking FROM stats INNER JOIN order_request ON order_request.order_request_id = stats.order_id")
-            const stats= rows?.filter(item=> moment(item?.time_created).valueOf() >= moment(req.query.time_start, "DD/MM/YYYY").valueOf() && moment(item?.time_created).valueOf() <= moment(req.query.time_end, "DD/MM/YYYY").valueOf())
+            const [rows]= await connection.execute("SELECT stats.*,stats.time_created AS time_created_1, order_request.user_name, order_request.time_created AS time_booking FROM stats INNER JOIN order_request ON order_request.order_request_id = stats.order_id")
+            const stats= rows?.filter(item=> moment(item?.time_created_1).valueOf() >= moment(req.query.time_start, "DD/MM/YYYY").valueOf() && moment(item?.time_created).valueOf() <= moment(req.query.time_end, "DD/MM/YYYY").valueOf())
             return res.status(200).json(stats)        
             
         } catch (error) {
